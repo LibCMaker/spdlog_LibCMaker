@@ -1,4 +1,4 @@
-# LibCMaker_spdlog
+# spdlog_LibCMaker
 
 The CMake build scripts for the spdlog library building with CMake.
 
