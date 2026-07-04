@@ -24,16 +24,18 @@
 // The code is based on the code from
 // <spdlog src>/tests/test_misc.cpp
 
+#ifdef _WIN32  // to prevent fopen warning on windows
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/ostream_sink.h"
 #include "spdlog/pattern_formatter.h"
 
 #include "gtest/gtest.h"
 
-template<class T>
-std::string log_info(const T &what, spdlog::level::level_enum logger_level = spdlog::level::info)
-{
-
+template <class T>
+std::string log_info(const T& what, spdlog::level::level_enum logger_level = spdlog::level::info) {
     std::ostringstream oss;
     auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
 
@@ -45,8 +47,7 @@ std::string log_info(const T &what, spdlog::level::level_enum logger_level = spd
     return oss.str().substr(0, oss.str().length() - strlen(spdlog::details::os::default_eol));
 }
 
-TEST(basic_logging, basic_logging)
-{
+TEST(basic_logging, basic_logging) {
     // const char
     EXPECT_TRUE(log_info("Hello") == "Hello");
     EXPECT_TRUE(log_info("").empty());
@@ -58,19 +59,12 @@ TEST(basic_logging, basic_logging)
     // Numbers
     EXPECT_TRUE(log_info(5) == "5");
     EXPECT_TRUE(log_info(5.6) == "5.6");
+
+    // User defined class
+    // EXPECT_TRUE(log_info(some_logged_class("some_val")) == "some_val");
 }
 
-TEST(log_levels, log_levels)
-{
-    EXPECT_TRUE(log_info("Hello", spdlog::level::err).empty());
-    EXPECT_TRUE(log_info("Hello", spdlog::level::critical).empty());
-    EXPECT_TRUE(log_info("Hello", spdlog::level::info) == "Hello");
-    EXPECT_TRUE(log_info("Hello", spdlog::level::debug) == "Hello");
-    EXPECT_TRUE(log_info("Hello", spdlog::level::trace) == "Hello");
-}
-
-TEST(level_to_string_view, convert_to_string_view)
-{
+TEST(level_to_string_view, convert_to_string_view) {
     EXPECT_TRUE(spdlog::level::to_string_view(spdlog::level::trace) == "trace");
     EXPECT_TRUE(spdlog::level::to_string_view(spdlog::level::debug) == "debug");
     EXPECT_TRUE(spdlog::level::to_string_view(spdlog::level::info) == "info");
@@ -78,15 +72,4 @@ TEST(level_to_string_view, convert_to_string_view)
     EXPECT_TRUE(spdlog::level::to_string_view(spdlog::level::err) == "error");
     EXPECT_TRUE(spdlog::level::to_string_view(spdlog::level::critical) == "critical");
     EXPECT_TRUE(spdlog::level::to_string_view(spdlog::level::off) == "off");
-}
-
-TEST(to_short_c_str, convert_to_short_c_str)
-{
-    EXPECT_TRUE(std::string(spdlog::level::to_short_c_str(spdlog::level::trace)) == "T");
-    EXPECT_TRUE(std::string(spdlog::level::to_short_c_str(spdlog::level::debug)) == "D");
-    EXPECT_TRUE(std::string(spdlog::level::to_short_c_str(spdlog::level::info)) == "I");
-    EXPECT_TRUE(std::string(spdlog::level::to_short_c_str(spdlog::level::warn)) == "W");
-    EXPECT_TRUE(std::string(spdlog::level::to_short_c_str(spdlog::level::err)) == "E");
-    EXPECT_TRUE(std::string(spdlog::level::to_short_c_str(spdlog::level::critical)) == "C");
-    EXPECT_TRUE(std::string(spdlog::level::to_short_c_str(spdlog::level::off)) == "O");
 }

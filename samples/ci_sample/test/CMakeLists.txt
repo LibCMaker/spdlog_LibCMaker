@@ -29,9 +29,6 @@ if(BUILD_TESTING)
     PRIVATE
       ${test_src_DIR}/example_test.cpp
   )
-  set_target_properties(${test_NAME} PROPERTIES
-    CXX_STANDARD 14
-  )
 
   # spdlog
   target_link_libraries(${test_NAME} PRIVATE spdlog::spdlog)
